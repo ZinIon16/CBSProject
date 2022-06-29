@@ -2,6 +2,7 @@
 using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 
@@ -17,7 +18,7 @@ namespace CBSProject
             using (SqlConnection conn = new SqlConnection(connectionstring))
             {
                 conn.Open();
-                SqlDataAdapter adapter = new SqlDataAdapter("SELECT First_Name, Last_Name FROM AGENT", conn);
+                SqlDataAdapter adapter = new SqlDataAdapter("SELECT First_Name, Last_Name,Agent_ID FROM AGENT", conn);
 
                 adapter.Fill(dt);
                 //dataGridView1.DataSource = dt;
@@ -57,35 +58,41 @@ namespace CBSProject
             }
         }
 
+        private DataTable dt2 = new DataTable();
+        private string lastName;
+
         private void cboSheet_SelectedIndexChanged(object sender, EventArgs e)
         {
-            DataTable dt2 = new DataTable();
             dt2 = tableCollection[cboSheet.SelectedItem.ToString()];
 
             dataTable.TableName = "Agents";
             dataTable.Columns.Add("First name");
-            dataTable.Columns.Add("Last Name");
+            //dataTable.Columns.Add("Last Name");
 
             //DataRow row12 = dataSet.Tables["Banks"].NewRow();
 
             string fName;
             string firstName;
-            string lastName;
+
             int count = 0;
             for (int i = 0; i < dt2.Rows.Count; i++)
             {
-                fName = dt2.Rows[i][0].ToString();
-                string[] fNameArr = fName.Split(' ');
-                firstName = fNameArr[0];
-                lastName = fNameArr[1];
-                if (firstName == dt.Rows[i][0].ToString() && lastName == dt.Rows[i][1].ToString())
-                {
-                    dataTable.Rows.Add();
-                    dataTable.Rows[count][0] = firstName;
-                    dataTable.Rows[count][1] = lastName;
-                    count++;
-                }
+                fName = dt.Rows[i][0].ToString() + " " + dt.Rows[i][1].ToString();
+                //string[] fNameArr = fName.Split(' ');
+                //firstName = fNameArr[0];
+                //if(fNameArr.Length == 3)
+                //{
+                //    lastName = fNameArr[1] + fNameArr[2];
+                //}
+                //else
+                //{
+                //    lastName = fNameArr[1];
+                //}
 
+                dataTable.Rows.Add();
+                dataTable.Rows[count][0] = fName;
+                //dataTable.Rows[count][1] = lastName;
+                count++;
             }
         }
 
@@ -94,17 +101,49 @@ namespace CBSProject
 
         private void button1_Click(object sender, EventArgs e)
         {
+           
+
+            DataTable dt3 = new DataTable();
+            dt3.TableName = "Agents";
+            dt3.Columns.Add("First name");
+            dt3.Columns.Add("Last name");
+            dt3.Columns.Add("Agent_ID");
+            for (int i = 0; i < dt2.Rows.Count; i++)
+            {
+                
+                    dt3.Rows.Add();
+                    dt3.Rows[i][0] = (dt.Rows[i][0].ToString());
+                dt3.Rows[i][1] = (dt.Rows[i][1].ToString());
+                dt3.Rows[i][2] = (dt.Rows[i][2].ToString());
+
+
+            }
             using (SqlConnection conn = new SqlConnection(connectionstring))
             {
                 conn.Open();
                 for (int i = 0; i < dataTable.Rows.Count; i++)
                 {
-                    adapter2 = new SqlDataAdapter("SELECT Agent_ID,First_Name,Last_Name FROM AGENT WHERE First_Name = '" + dataTable.Rows[i][0].ToString() + "'", conn);
+                    string qry = "SELECT Agent_ID, First_Name, Last_Name FROM AGENT WHERE First_Name = '" + dt.Rows[i][0].ToString() + "'" + "and Last_Name = '" + dt.Rows[i][1].ToString() + "'";
+
+                    adapter2 = new SqlDataAdapter("SELECT Agent_ID,First_Name,Last_Name FROM AGENT WHERE First_Name = '" 
+                        + dt.Rows[i][0].ToString() + "'" + "and Last_Name = '" + dt.Rows[i][1].ToString() + "'", conn);
                     adapter2.Fill(DataTable2);
                 }
-
-                dataGridView1.DataSource = DataTable2;
             }
+            dataGridView1.DataSource = dt3;
+
+            for (int i = 0; i < dt3.Rows.Count; i++)
+            {
+                if (dataTable.Rows[i][0].ToString() != dt2.Rows[i][0].ToString() )
+                {
+                    dataGridView1.Rows[i ].Cells[0].Style.ForeColor = Color.Red;
+                    dataGridView1.Rows[i ].Cells[1].Style.ForeColor = Color.Red;
+                    dataGridView1.Rows[i ].Cells[2].Style.ForeColor = Color.Red;
+                    //dataGridView1.Rows[i].Cells[3].Style.ForeColor = Color.Red;
+                }
+            }
+
+        
         }
     }
 }
