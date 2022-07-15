@@ -35,6 +35,8 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.cboSheet = new System.Windows.Forms.ComboBox();
             this.txtFilename = new System.Windows.Forms.Label();
+            this.YearMlbl = new System.Windows.Forms.Label();
+            this.dateTimePicker = new System.Windows.Forms.DateTimePicker();
             btnBrowse = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
@@ -66,9 +68,9 @@
             // 
             this.dataGridView1.AllowUserToAddRows = false;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(12, 12);
+            this.dataGridView1.Location = new System.Drawing.Point(17, 12);
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(745, 199);
+            this.dataGridView1.Size = new System.Drawing.Size(770, 189);
             this.dataGridView1.TabIndex = 1;
             // 
             // txtSheet
@@ -109,11 +111,30 @@
             this.txtFilename.TabIndex = 47;
             this.txtFilename.Text = "FileName";
             // 
+            // YearMlbl
+            // 
+            this.YearMlbl.AutoSize = true;
+            this.YearMlbl.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.YearMlbl.Location = new System.Drawing.Point(551, 266);
+            this.YearMlbl.Name = "YearMlbl";
+            this.YearMlbl.Size = new System.Drawing.Size(39, 13);
+            this.YearMlbl.TabIndex = 52;
+            this.YearMlbl.Text = "YYMM";
+            // 
+            // dateTimePicker
+            // 
+            this.dateTimePicker.Location = new System.Drawing.Point(596, 261);
+            this.dateTimePicker.Name = "dateTimePicker";
+            this.dateTimePicker.Size = new System.Drawing.Size(200, 20);
+            this.dateTimePicker.TabIndex = 53;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.dateTimePicker);
+            this.Controls.Add(this.YearMlbl);
             this.Controls.Add(this.txtSheet);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.cboSheet);
@@ -137,6 +158,8 @@
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.ComboBox cboSheet;
         private System.Windows.Forms.Label txtFilename;
+        private System.Windows.Forms.Label YearMlbl;
+        private System.Windows.Forms.DateTimePicker dateTimePicker;
     }
 }
 
