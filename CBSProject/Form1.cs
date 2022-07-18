@@ -162,14 +162,8 @@ namespace CBSProject
             Dt2.Columns.Add("MBERefNo");
             Dt2.Columns.Add("SiteTerminalID");
 
-            DtFinal.TableName = "Agents";
-            DtFinal.Columns.Add("AgentName");
-            DtFinal.Columns.Add("AgentID");
-            DtFinal.Columns.Add("MBERefNo");
-            DtFinal.Columns.Add("SiteTerminalID");
-            DtFinal.Columns.Add("CommissionAmount");
-            DtFinal.Columns.Add("PaymentMode");
-            DtFinal.Columns.Add("PaymentYM");
+          
+        
             int counter = 0;
             Boolean flag=false;
             for (int i = 0; i < dataTableExcel.Rows.Count; i++)
@@ -219,32 +213,99 @@ namespace CBSProject
             }
             counter = 0;
 
-            for (int i = 0; i < dataTableSimplifying.Rows.Count; i++)
+            for (int i = 0; i < Dt1.Rows.Count; i++)
             {
-                for (int j = 0; j < dataTableSimplifying.Rows.Count; j++)
+                for (int j = 0; j < Dt2.Rows.Count; j++)
                 {
-                    using (SqlConnection conn = new SqlConnection(connectionstring))
-            {
+                    SqlConnection conn = new SqlConnection(connectionstring);
+                    using (var cmd = conn.CreateCommand())
+                    {
+                        string result;
+                        string ID;
+                        string Agent_ID;
+                        string Terminal_ID;
+                        decimal ComAmount;
+                        string PaymentMode;
+                  
+                        Agent_ID = Dt1.Rows[i][1].ToString();
+                        Terminal_ID = Dt2.Rows[j][1].ToString();
+                        ComAmount = Convert.ToDecimal(dataTableExcel.Rows[i][3]);
+                        PaymentMode = dataTableExcel.Rows[i][2].ToString();
+                        conn.Open();
+                        cmd.CommandText = "SpCheckAndUpdateRecord '" + Agent_ID + "','" + Terminal_ID + "'," + ComAmount + ",'" + PaymentMode + "','"  + date +"'";
 
-                string Agent_ID;
-                string Terminal_ID;
-                Agent_ID = Dt1.Rows[i][1].ToString();
-                Terminal_ID = Dt2.Rows[j][1].ToString();
-                        //Agent_ID = "299";
-                        //Terminal_ID = "44932";
-                conn.Open();
-                string Query = ("SELECT * FROM TerminalCommissionCalculation WHERE " + "AgentID ='"
-                    + Agent_ID + "' and SiteTerminalID='" + Terminal_ID + "' and PaymentYM ='" + date + "'");
-                //SqlCommand cmd=new SqlCommand(Query,conn);
-                //SqlDataReader reader = cmd.ExecuteReader();
 
-                SqlDataAdapter adapter2 = new SqlDataAdapter("SELECT * FROM TerminalCommissionCalculation WHERE " + "AgentID ='"
-                    + Agent_ID + "' and SiteTerminalID='" + Terminal_ID + "' and PaymentYM ='" + date + "'", conn);
-                adapter2.Fill(DtFinal);
+                        using (var reader2 = cmd.ExecuteReader())
+                        {
+                            if (reader2.HasRows)
+                            {
+                                while (reader2.Read())
+                                {
+
+                                    result = (reader2["Result"].ToString());
+                                    if (result == "1")
+                                    {
+                                        MessageBox.Show("Record updated successfully");
+                                    }
+
+                                    else
+                                    {
+                                        MessageBox.Show("Record added successfully");
+                                    }
+                                    
+                                }
+                            }
+                            conn.Close();
+                        }
+
                     }
                 }
             }
 
+            //for (int i = 0; i < dataTableSimplifying.Rows.Count; i++)
+            //{
+            //    for (int j = 0; j < dataTableSimplifying.Rows.Count; j++)
+            //    {
+            //        using (SqlConnection conn = new SqlConnection(connectionstring))
+            //{
+
+            //    string Agent_ID;
+            //    string Terminal_ID;
+            //    Agent_ID = Dt1.Rows[i][1].ToString();
+            //    Terminal_ID = Dt2.Rows[j][1].ToString();
+            //            //Agent_ID = "299";
+            //            //Terminal_ID = "44932";
+            //    conn.Open();
+            //    string Query = ("SELECT * FROM TerminalCommissionCalculation WHERE " + "AgentID ='"
+            //        + Agent_ID + "' and SiteTerminalID='" + Terminal_ID + "' and PaymentYM ='" + date + "'");
+            //    //SqlCommand cmd=new SqlCommand(Query,conn);
+            //    //SqlDataReader reader = cmd.ExecuteReader();
+
+            //    SqlDataAdapter adapter2 = new SqlDataAdapter("SELECT * FROM TerminalCommissionCalculation WHERE " + "AgentID ='"
+            //        + Agent_ID + "' and SiteTerminalID='" + Terminal_ID + "' and PaymentYM ='" + date + "'", conn);
+            //    adapter2.Fill(DtFinal);
+            //        }
+            //    }
+            //}
+
+            Dt1.Merge(Dt2);
+            Dt1.AcceptChanges();
+            Dt2.AcceptChanges();
+
+            DtFinal.TableName = "Agents";
+            DtFinal.Columns.Add("AgentName");
+            DtFinal.Columns.Add("AgentID");
+            DtFinal.Columns.Add("MBERefNo");
+            DtFinal.Columns.Add("SiteTerminalID");
+
+            for(int i = 0; i < Dt1.Rows.Count; i++)
+            {
+                DtFinal.Rows.Add(Dt1.Rows[i][0]);
+                DtFinal.Rows[i][1] = Dt1.Rows[i][1];
+                DtFinal.Rows[i][2] = Dt2.Rows[i][0];
+                DtFinal.Rows[i][3] = Dt1.Rows[i][1];
+
+            }
             dataGridView1.DataSource = DtFinal;
 
             //    for (int i = 0; i < dataTableExcel.Rows.Count; i++)
