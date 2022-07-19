@@ -28,20 +28,14 @@ namespace CBSProject
                 SqlDataAdapter adapter2 = new SqlDataAdapter("SELECT MBERefNo, SiteTerminalID FROM SiteTerminal", conn);
                 adapter2.Fill(datatableDBS);
             }
-            using (SqlConnection conn = new SqlConnection(connectionstring))
-            {
-                conn.Open();
-                SqlDataAdapter adapter2 = new SqlDataAdapter("SELECT AgentID, SiteTerminalID,CommissionAmount,PaymentMode, PaymentYM FROM TerminalCommissionCalculation", conn);
-                adapter2.Fill(datatableTCC);
-            }
+  
 
         }
 
         private DataTable dataTableMerge = new DataTable();
         private DataTable datatableDB = new DataTable();
         private DataTable datatableDBS = new DataTable();
-        private DataTable datatableTCC = new DataTable();
-        private DataTable datatableTCCSimple = new DataTable();
+
 
         private DataTableCollection tableCollection;
 
@@ -82,12 +76,7 @@ namespace CBSProject
             dataTableMerge.TableName = "Agents";
             dataTableMerge.Columns.Add("AgentName");
             dataTableMerge.Columns.Add("AgentID");
-            datatableTCCSimple.TableName = "TCC";
-            datatableTCCSimple.Columns.Add("AgentID");
-            datatableTCCSimple.Columns.Add("SiteTerminalID");
-            datatableTCCSimple.Columns.Add("CommissionAmount");
-            datatableTCCSimple.Columns.Add("PaymentMode");
-            datatableTCCSimple.Columns.Add("PaymentYM");
+      
             string fName;
 
             int count = 0;
@@ -100,48 +89,109 @@ namespace CBSProject
                 count++;
             }
             count = 0;
-            for (int i = 0; i < dataTableExcel.Rows.Count; i++)
-            {
-                datatableTCCSimple.Rows.Add();
-                datatableTCCSimple.Rows[i][0] = datatableTCC.Rows[i][0].ToString();
-                datatableTCCSimple.Rows[i][1] = datatableTCC.Rows[i][1].ToString();
-                datatableTCCSimple.Rows[i][2] = datatableTCC.Rows[i][2].ToString();
-                datatableTCCSimple.Rows[i][3] = datatableTCC.Rows[i][3].ToString();
-                datatableTCCSimple.Rows[i][4] = datatableTCC.Rows[i][4].ToString();
-                count++;
-            }
+       
 
         }
         DataTable DtFinal = new DataTable();
         DataTable Dt1 = new DataTable();
         DataTable Dt2 = new DataTable();
+        bool AddedFlag = false;
+        bool UpdatedFlag = false;
         private void button1_Click(object sender, EventArgs e)
         {
+            
 
-            DataTable dataTableSimplifying = new DataTable();
-            dataTableSimplifying.TableName = "Agents";
-            dataTableSimplifying.Columns.Add("First name");
-            dataTableSimplifying.Columns.Add("Last name");
-            dataTableSimplifying.Columns.Add("Agent_ID");
-            dataTableSimplifying.Columns.Add("MBERefNo");
-            dataTableSimplifying.Columns.Add("SiteTerminalID");
-            dataTableSimplifying.Columns.Add("CommissionAmount");
-            dataTableSimplifying.Columns.Add("PaymentMode");
-            dataTableSimplifying.Columns.Add("PaymentYM");
+            Dt1.Columns.Add("AgentName");
+            Dt1.Columns.Add("AgentID");
 
+            Dt2.Columns.Add("MBERefNo");
+            Dt2.Columns.Add("SiteTerminalID");
+
+          
+            int counter = 0;
+            Boolean flag=false;
             for (int i = 0; i < dataTableExcel.Rows.Count; i++)
             {
-                dataTableSimplifying.Rows.Add();
-                dataTableSimplifying.Rows[i][0] = (datatableDB.Rows[i][0].ToString());
-                dataTableSimplifying.Rows[i][1] = (datatableDB.Rows[i][1].ToString());
-                dataTableSimplifying.Rows[i][2] = (datatableDB.Rows[i][2].ToString());
-                dataTableSimplifying.Rows[i][3] = (datatableDBS.Rows[i][0].ToString());
-                dataTableSimplifying.Rows[i][4] = (datatableDBS.Rows[i][1].ToString());
-                dataTableSimplifying.Rows[i][5] = (datatableTCCSimple.Rows[i][2].ToString());
-                dataTableSimplifying.Rows[i][6] = (datatableTCCSimple.Rows[i][3].ToString());
-                dataTableSimplifying.Rows[i][7] = (datatableTCCSimple.Rows[i][4].ToString());
-
+                flag = false;
+          
+                    if (dataTableExcel.Rows[i][0].ToString() == dataTableMerge.Rows[i][0].ToString())
+                    {
+                        flag = true;
+                        Dt1.Rows.Add();
+                        Dt1.Rows[counter][0] = dataTableMerge.Rows[i][0].ToString();
+                        Dt1.Rows[counter][1] = dataTableMerge.Rows[i][1].ToString();
+                        counter++;
+                    }
+           
+                if (flag == false)
+                {
+                    Dt1.Rows.Add();
+                    Dt1.Rows[counter][0] = dataTableExcel.Rows[i][0].ToString();
+                    Dt1.Rows[counter][1] = "";
+                    counter++;
+                }
             }
+            counter= 0;
+            for (int i = 0; i < dataTableExcel.Rows.Count; i++)
+            {
+                flag = false;
+            
+                    if (dataTableExcel.Rows[i][1].ToString() == datatableDBS.Rows[i][0].ToString())
+                    {
+                        flag = true;
+                        Dt2.Rows.Add();
+                        Dt2.Rows[counter][0] = datatableDBS.Rows[i][0].ToString();
+                        Dt2.Rows[counter][1] = datatableDBS.Rows[i][1].ToString();
+                        counter++;
+                    }
+
+                if (flag == false)
+                {
+                    Dt2.Rows.Add();
+                    Dt2.Rows[counter][0] = dataTableExcel.Rows[i][1].ToString();
+                    Dt2.Rows[counter][1] = "";
+                    counter++;
+                }
+            }
+      
+    
+            DtFinal.TableName = "Agents";
+            DtFinal.Columns.Add("AgentName");
+            DtFinal.Columns.Add("AgentID");
+            DtFinal.Columns.Add("MBERefNo");
+            DtFinal.Columns.Add("SiteTerminalID");
+            DtFinal.Columns.Add("CommissionAmount");
+            DtFinal.Columns.Add("PaymentMode");
+
+            counter = 0;
+            for (int i = 0; i < dataTableExcel.Rows.Count; i++)
+            {
+                DtFinal.Rows.Add(Dt1.Rows[i][0]);
+                DtFinal.Rows[i][1] = Dt1.Rows[i][1];
+                DtFinal.Rows[i][2] = Dt2.Rows[i][0];
+                DtFinal.Rows[i][3] = Dt2.Rows[i][1];
+                DtFinal.Rows[i][4] = dataTableExcel.Rows[i][2];
+                DtFinal.Rows[i][5] = dataTableExcel.Rows[i][3];
+            }
+            dataGridView1.DataSource = DtFinal;
+
+
+
+            for (int i = 0; i < DtFinal.Rows.Count; i++)
+            {
+                for (int j = 0; j < DtFinal.Columns.Count; j++)
+                {
+                    if (DtFinal.Rows[i][j].ToString() == "")
+                    {
+                        dataGridView1.Rows[i].Cells[j].Style.BackColor = Color.Red;
+                    }
+                }
+            }
+
+        }
+
+        private void btnDB_Click(object sender, EventArgs e)
+        {
             DateTime dateTime = dateTimePicker.Value;
             string date;
             string month;
@@ -155,234 +205,74 @@ namespace CBSProject
                 month = dateTime.Month.ToString();
                 date = dateTime.Year.ToString() + month;
             }
-
-            Dt1.Columns.Add("AgentName");
-            Dt1.Columns.Add("AgentID");
-
-            Dt2.Columns.Add("MBERefNo");
-            Dt2.Columns.Add("SiteTerminalID");
-
-          
-        
             int counter = 0;
-            Boolean flag=false;
+            int counterdt1 = 0;
+            int counterdt2 = 0;
+
             for (int i = 0; i < dataTableExcel.Rows.Count; i++)
             {
-                flag = false;
-                for (int j = 0; j < dataTableMerge.Rows.Count; j++)
+                counterdt1++;
+                counterdt2++;
+                SqlConnection conn = new SqlConnection(connectionstring);
+                using (var cmd = conn.CreateCommand())
                 {
-                    if (dataTableExcel.Rows[i][0].ToString() == dataTableMerge.Rows[j][0].ToString())
+                    string result;
+                    string ID;
+                    string Agent_ID;
+                    string Terminal_ID;
+                    decimal ComAmount;
+                    string PaymentMode;
+
+
+                    if (Dt1.Rows[counter][1].ToString() == "")
                     {
-                        flag = true;
-                        Dt1.Rows.Add();
-                        Dt1.Rows[counter][0] = dataTableMerge.Rows[j][0].ToString();
-                        Dt1.Rows[counter][1] = dataTableMerge.Rows[j][1].ToString();
-                        counter++;
+                        counterdt1++;
                     }
-                }
-                if (flag == false)
-                {
-                    Dt1.Rows.Add();
-                    Dt1.Rows[counter][0] = dataTableExcel.Rows[i][0].ToString();
-                    Dt1.Rows[counter][1] = "";
-                    counter++;
-                }
-            }
-            counter= 0;
-            for (int i = 0; i < dataTableExcel.Rows.Count; i++)
-            {
-                flag = false;
-                for (int j = 0; j < datatableDBS.Rows.Count; j++)
-                {
-                    if (dataTableExcel.Rows[i][1].ToString() == datatableDBS.Rows[j][0].ToString())
+                    if (Dt2.Rows[counter][1].ToString() == "")
                     {
-                        flag = true;
-                        Dt2.Rows.Add();
-                        Dt2.Rows[counter][0] = datatableDBS.Rows[j][0].ToString();
-                        Dt2.Rows[counter][1] = datatableDBS.Rows[j][1].ToString();
-                        counter++;
+                        counterdt2++;
                     }
-                }
-                if (flag == false)
-                {
-                    Dt2.Rows.Add();
-                    Dt2.Rows[counter][0] = dataTableExcel.Rows[i][1].ToString();
-                    Dt2.Rows[counter][1] = "";
-                    counter++;
-                }
-            }
-            counter = 0;
+                    Agent_ID = Dt1.Rows[counter][1].ToString();
+                    Terminal_ID = Dt2.Rows[counter][1].ToString();
+                    ComAmount = Convert.ToDecimal(dataTableExcel.Rows[i][3]);
+                    PaymentMode = dataTableExcel.Rows[i][2].ToString();
+                    conn.Open();
+                    cmd.CommandText = "SpCheckAndUpdateRecord '" + Agent_ID + "','" + Terminal_ID + "'," + ComAmount + ",'" + PaymentMode + "','" + date + "'";
 
-            for (int i = 0; i < Dt1.Rows.Count; i++)
-            {
-                for (int j = 0; j < Dt2.Rows.Count; j++)
-                {
-                    SqlConnection conn = new SqlConnection(connectionstring);
-                    using (var cmd = conn.CreateCommand())
+
+                    using (var reader2 = cmd.ExecuteReader())
                     {
-                        string result;
-                        string ID;
-                        string Agent_ID;
-                        string Terminal_ID;
-                        decimal ComAmount;
-                        string PaymentMode;
-                  
-                        Agent_ID = Dt1.Rows[i][1].ToString();
-                        Terminal_ID = Dt2.Rows[j][1].ToString();
-                        ComAmount = Convert.ToDecimal(dataTableExcel.Rows[i][3]);
-                        PaymentMode = dataTableExcel.Rows[i][2].ToString();
-                        conn.Open();
-                        cmd.CommandText = "SpCheckAndUpdateRecord '" + Agent_ID + "','" + Terminal_ID + "'," + ComAmount + ",'" + PaymentMode + "','"  + date +"'";
-
-
-                        using (var reader2 = cmd.ExecuteReader())
+                        if (reader2.HasRows)
                         {
-                            if (reader2.HasRows)
+                            while (reader2.Read())
                             {
-                                while (reader2.Read())
+
+                                result = (reader2["Result"].ToString());
+                                if (result == "1")
                                 {
-
-                                    result = (reader2["Result"].ToString());
-                                    if (result == "1")
-                                    {
-                                        MessageBox.Show("Record updated successfully");
-                                    }
-
-                                    else
-                                    {
-                                        MessageBox.Show("Record added successfully");
-                                    }
-                                    
+                                    UpdatedFlag = true;
                                 }
-                            }
-                            conn.Close();
-                        }
 
+                                else
+                                {
+                                    AddedFlag = true;
+                                }
+
+                            }
+                        }
+                        conn.Close();
                     }
+
                 }
             }
-
-            //for (int i = 0; i < dataTableSimplifying.Rows.Count; i++)
-            //{
-            //    for (int j = 0; j < dataTableSimplifying.Rows.Count; j++)
-            //    {
-            //        using (SqlConnection conn = new SqlConnection(connectionstring))
-            //{
-
-            //    string Agent_ID;
-            //    string Terminal_ID;
-            //    Agent_ID = Dt1.Rows[i][1].ToString();
-            //    Terminal_ID = Dt2.Rows[j][1].ToString();
-            //            //Agent_ID = "299";
-            //            //Terminal_ID = "44932";
-            //    conn.Open();
-            //    string Query = ("SELECT * FROM TerminalCommissionCalculation WHERE " + "AgentID ='"
-            //        + Agent_ID + "' and SiteTerminalID='" + Terminal_ID + "' and PaymentYM ='" + date + "'");
-            //    //SqlCommand cmd=new SqlCommand(Query,conn);
-            //    //SqlDataReader reader = cmd.ExecuteReader();
-
-            //    SqlDataAdapter adapter2 = new SqlDataAdapter("SELECT * FROM TerminalCommissionCalculation WHERE " + "AgentID ='"
-            //        + Agent_ID + "' and SiteTerminalID='" + Terminal_ID + "' and PaymentYM ='" + date + "'", conn);
-            //    adapter2.Fill(DtFinal);
-            //        }
-            //    }
-            //}
-
-            Dt1.Merge(Dt2);
-            Dt1.AcceptChanges();
-            Dt2.AcceptChanges();
-
-            DtFinal.TableName = "Agents";
-            DtFinal.Columns.Add("AgentName");
-            DtFinal.Columns.Add("AgentID");
-            DtFinal.Columns.Add("MBERefNo");
-            DtFinal.Columns.Add("SiteTerminalID");
-
-            for(int i = 0; i < Dt1.Rows.Count; i++)
+            if (UpdatedFlag == true)
             {
-                DtFinal.Rows.Add(Dt1.Rows[i][0]);
-                DtFinal.Rows[i][1] = Dt1.Rows[i][1];
-                DtFinal.Rows[i][2] = Dt2.Rows[i][0];
-                DtFinal.Rows[i][3] = Dt1.Rows[i][1];
-
+                MessageBox.Show("Record updated successfully");
             }
-            dataGridView1.DataSource = DtFinal;
-
-            //    for (int i = 0; i < dataTableExcel.Rows.Count; i++)
-            //    {
-            //        for (int j = 0; j < dataTableExcel.Rows.Count; j++)
-            //        {
-            //            if (dataTableExcel.Rows[i][0].ToString() != dataTableMerge.Rows[j][0].ToString())
-            //            {
-            //                dataGridView1.Rows[i].Cells[0].Style.ForeColor = Color.Red;
-            //            }
-            //        }
-            //    }
-
-            //    DateTime dateTime = dateTimePicker.Value;
-            //    string date;
-            //    string month;
-            //    if(dateTime.Month.ToString().Length < 2)
-            //    {
-            //        month = "0"+ dateTime.Month.ToString();
-            //        date = dateTime.Year.ToString() + month;
-            //    }
-            //    else
-            //    {
-            //        month = dateTime.Month.ToString();
-            //        date = dateTime.Year.ToString() + month;
-            //    }
-
-
-            //    for (int i = 0; i < dataTableSimplifying.Rows.Count; i++)
-            //    {
-
-            //        if (dataTableMerge.Rows[i][0].ToString() != dataTableExcel.Rows[i][0].ToString())
-            //        {
-            //            dataGridView1.Rows[i].Cells[0].Style.ForeColor = Color.Red;
-            //        }
-            //        if (datatableDBS.Rows[i][0].ToString() != dataTableExcel.Rows[i][1].ToString())
-            //        {
-            //            dataGridView1.Rows[i].Cells[3].Style.ForeColor = Color.Red;
-            //        }
-
-            //        if (Convert.ToDecimal(datatableTCCSimple.Rows[i][2]) != Convert.ToDecimal(dataTableExcel.Rows[i][3]))
-            //        {
-            //            dataGridView1.Rows[i].Cells[5].Style.ForeColor = Color.Red;
-            //        }
-            //        if (datatableTCCSimple.Rows[i][3].ToString() != dataTableExcel.Rows[i][2].ToString())
-            //        {
-            //            dataGridView1.Rows[i].Cells[6].Style.ForeColor = Color.Red;
-            //        }
-            //    }
-
-            //    //for (int i = 0; i < dataTableSimplifying.Rows.Count; i++)
-            //    //{
-            //    //    for (int j = 0; j < dataTableSimplifying.Rows.Count; j++)
-            //    //    {
-            //            using (SqlConnection conn = new SqlConnection(connectionstring))
-            //            {
-
-            //                string Agent_ID;
-            //                //Agent_ID = datatableDB.Rows[i][2].ToString();
-            //                string Terminal_ID;
-            //                //Terminal_ID = datatableDBS.Rows[j][1].ToString();
-            //                Agent_ID = "299";
-            //                Terminal_ID = "44932";
-            //                conn.Open();
-            //                string Query = ("SELECT * FROM TerminalCommissionCalculation WHERE " + "AgentID ='"
-            //                    + Agent_ID + "' and SiteTerminalID='" + Terminal_ID + "' and PaymentYM ='" + date + "'");
-            //                //SqlCommand cmd=new SqlCommand(Query,conn);
-            //                //SqlDataReader reader = cmd.ExecuteReader();
-
-            //                SqlDataAdapter adapter2 = new SqlDataAdapter("SELECT * FROM TerminalCommissionCalculation WHERE " + "AgentID ='"
-            //                    + Agent_ID + "' and SiteTerminalID='" + Terminal_ID + "' and PaymentYM ='" + date + "'", conn);
-            //                adapter2.Fill(DtFinal);
-            //            }
-            //    //    }
-            //    //}
-            //    dataGridView1.DataSource = DtFinal;
+            else if (AddedFlag == true)
+            {
+                MessageBox.Show("Record added successfully");
+            }
         }
-
     }
 }

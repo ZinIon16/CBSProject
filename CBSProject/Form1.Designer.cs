@@ -37,6 +37,7 @@
             this.txtFilename = new System.Windows.Forms.Label();
             this.YearMlbl = new System.Windows.Forms.Label();
             this.dateTimePicker = new System.Windows.Forms.DateTimePicker();
+            this.btnDB = new System.Windows.Forms.Button();
             btnBrowse = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
@@ -56,7 +57,7 @@
             // 
             // btnDisplay
             // 
-            this.btnDisplay.Location = new System.Drawing.Point(362, 261);
+            this.btnDisplay.Location = new System.Drawing.Point(357, 266);
             this.btnDisplay.Name = "btnDisplay";
             this.btnDisplay.Size = new System.Drawing.Size(75, 23);
             this.btnDisplay.TabIndex = 0;
@@ -128,11 +129,22 @@
             this.dateTimePicker.Size = new System.Drawing.Size(200, 20);
             this.dateTimePicker.TabIndex = 53;
             // 
+            // btnDB
+            // 
+            this.btnDB.Location = new System.Drawing.Point(345, 323);
+            this.btnDB.Name = "btnDB";
+            this.btnDB.Size = new System.Drawing.Size(102, 23);
+            this.btnDB.TabIndex = 54;
+            this.btnDB.Text = "Add to Database";
+            this.btnDB.UseVisualStyleBackColor = true;
+            this.btnDB.Click += new System.EventHandler(this.btnDB_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btnDB);
             this.Controls.Add(this.dateTimePicker);
             this.Controls.Add(this.YearMlbl);
             this.Controls.Add(this.txtSheet);
@@ -160,6 +172,7 @@
         private System.Windows.Forms.Label txtFilename;
         private System.Windows.Forms.Label YearMlbl;
         private System.Windows.Forms.DateTimePicker dateTimePicker;
+        private System.Windows.Forms.Button btnDB;
     }
 }
 
